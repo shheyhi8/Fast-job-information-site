@@ -130,9 +130,12 @@ function getFileDate(filename) {
   }
 }
 
-app.listen(PORT, () => {
-  console.log(`✅ 서버 실행 중: http://localhost:${PORT}`);
-  console.log(`📂 채용공고: ${readData('jobs.json').length}건 (Work24 실제 데이터)`);
-  console.log(`📂 강소기업: ${readData('companies.json').length}건 (Work24 실제 데이터)`);
-  console.log(`   → Claude에게 "데이터 새로고침" 요청 시 최신 데이터로 업데이트됩니다.`);
-});
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`✅ 서버 실행 중: http://localhost:${PORT}`);
+    console.log(`📂 채용공고: ${readData('jobs.json').length}건 (Work24 실제 데이터)`);
+    console.log(`📂 강소기업: ${readData('companies.json').length}건 (Work24 실제 데이터)`);
+  });
+}
+
+module.exports = app;
