@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install *)",
+      "PowerShell(Get-ChildItem \"C:\\\\Program Files\\\\nodejs\" -ErrorAction SilentlyContinue | Select-Object Name; Get-ChildItem \"C:\\\\Program Files \\(x86\\)\\\\nodejs\" -ErrorAction SilentlyContinue | Select-Object Name; Get-ChildItem \"$env:APPDATA\\\\npm\" -ErrorAction SilentlyContinue | Select-Object -First 5 Name)",
+      "PowerShell(python --version 2>&1)",
+      "PowerShell(python3 --version 2>&1)",
+      "PowerShell(cd \"C:\\\\Users\\\\안혜준\\\\Desktop\\\\매력일자리 바이브코딩 폴더\"; Start-Process python -ArgumentList \"server.py\" -WindowStyle Hidden; Start-Sleep -Seconds 2; try { $r = Invoke-WebRequest \"http://localhost:3000/api/jobs?pageSize=3\" -UseBasicParsing -TimeoutSec 5; $r.StatusCode } catch { $_.Exception.Message })",
+      "Bash(curl -s \"http://localhost:3000/api/jobs?pageSize=3\")",
+      "mcp__a8840e37-d0a1-467d-89d1-87573ca862c2__work24JobHelper-find_recruit_notice_tool",
+      "mcp__a8840e37-d0a1-467d-89d1-87573ca862c2__work24JobHelper-find_strong_company_tool",
+      "mcp__a8840e37-d0a1-467d-89d1-87573ca862c2__work24JobHelper-find_training_course_tool",
+      "Bash(curl -s \"http://localhost:3000/api/jobs?pageSize=2\")",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\('total:', d['total'], '| updatedAt:', d.get\\('updatedAt'\\), '| first:', d['items'][0]['company'], '-', d['items'][0]['title'][:20]\\)\")"
+    ]
+  }
+}

@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>매력일자리 — 취업 정보 한눈에</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue: #2563EB;
+      --blue-dark: #1D4ED8;
+      --blue-light: #EFF6FF;
+      --blue-mid: #DBEAFE;
+      --gray-50: #F9FAFB;
+      --gray-100: #F3F4F6;
+      --gray-200: #E5E7EB;
+      --gray-400: #9CA3AF;
+      --gray-600: #4B5563;
+      --gray-800: #1F2937;
+      --green: #10B981;
+      --orange: #F59E0B;
+      --red: #EF4444;
+      --radius: 12px;
+      --shadow: 0 1px 3px rgba(0,0,0,.08), 0 4px 12px rgba(0,0,0,.05);
+      --shadow-hover: 0 4px 16px rgba(37,99,235,.15);
+    }
+
+    body {
+      font-family: 'Pretendard', 'Apple SD Gothic Neo', -apple-system, sans-serif;
+      background: var(--gray-50);
+      color: var(--gray-800);
+      min-height: 100vh;
+    }
+
+    /* ── 헤더 ── */
+    header {
+      background: linear-gradient(135deg, #1E40AF 0%, #2563EB 60%, #3B82F6 100%);
+      color: #fff;
+      padding: 32px 20px 48px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    header::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") repeat;
+    }
+    .header-inner { position: relative; max-width: 900px; margin: 0 auto; }
+    header h1 { font-size: 2rem; font-weight: 800; letter-spacing: -0.5px; }
+    header p { margin-top: 6px; opacity: .85; font-size: .95rem; }
+
+    /* ── 검색 바 (헤더 하단 오버랩) ── */
+    .search-wrap {
+      max-width: 720px;
+      margin: 0 auto;
+      transform: translateY(50%);
+      padding: 0 20px;
+      position: relative;
+      z-index: 10;
+    }
+    .search-box {
+      background: #fff;
+      border-radius: var(--radius);
+      box-shadow: 0 8px 32px rgba(0,0,0,.14);
+      padding: 16px 20px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    .search-box input[type=text] {
+      flex: 1;
+      border: 1.5px solid var(--gray-200);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: .95rem;
+      outline: none;
+      transition: border-color .2s;
+    }
+    .search-box input[type=text]:focus { border-color: var(--blue); }
+    .search-box select {
+      border: 1.5px solid var(--gray-200);
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: .9rem;
+      outline: none;
+      background: #fff;
+      color: var(--gray-600);
+      cursor: pointer;
+    }
+    .btn-search {
+      background: var(--blue);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 22px;
+      font-size: .95rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background .2s;
+    }
+    .btn-search:hover { background: var(--blue-dark); }
+
+    /* ── 메인 컨텐츠 ── */
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 80px 20px 40px;
+    }
+
+    /* ── 탭 ── */
+    .tabs {
+      display: flex;
+      gap: 4px;
+      border-bottom: 2px solid var(--gray-200);
+      margin-bottom: 28px;
+    }
+    .tab-btn {
+      padding: 12px 24px;
+      font-size: .95rem;
+      font-weight: 600;
+      color: var(--gray-400);
+      background: none;
+      border: none;
+      cursor: pointer;
+      position: relative;
+      transition: color .2s;
+    }
+    .tab-btn::after {
+      content: '';
+      position: absolute;
+      bottom: -2px; left: 0; right: 0;
+      height: 2px;
+      background: var(--blue);
+      transform: scaleX(0);
+      transition: transform .2s;
+      border-radius: 2px 2px 0 0;
+    }
+    .tab-btn.active { color: var(--blue); }
+    .tab-btn.active::after { transform: scaleX(1); }
+    .tab-count {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 22px;
+      height: 22px;
+      padding: 0 6px;
+      border-radius: 20px;
+      font-size: .75rem;
+      font-weight: 700;
+      background: var(--blue-mid);
+      color: var(--blue);
+      margin-left: 6px;
+    }
+
+    /* ── 결과 헤더 ── */
+    .result-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .result-count { font-size: .9rem; color: var(--gray-600); }
+    .result-count strong { color: var(--blue); font-weight: 700; }
+    .data-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      border-radius: 20px;
+      padding: 4px 12px;
+      font-size: .78rem;
+      font-weight: 600;
+    }
+    .data-badge.real { background: #ECFDF5; color: #065F46; }
+    .data-badge.sample { background: #FEF3C7; color: #92400E; }
+
+    /* ── 카드 그리드 ── */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 16px;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: box-shadow .2s, transform .2s;
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
+    }
+    .card:hover {
+      box-shadow: var(--shadow-hover);
+      transform: translateY(-2px);
+    }
+    .card-title {
+      font-size: 1rem;
+      font-weight: 700;
+      line-height: 1.4;
+      color: var(--gray-800);
+    }
+    .card-company {
+      font-size: .88rem;
+      color: var(--blue);
+      font-weight: 600;
+    }
+    .card-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 2px;
+    }
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      background: var(--blue-light);
+      color: var(--blue-dark);
+      border-radius: 6px;
+      padding: 3px 9px;
+      font-size: .78rem;
+      font-weight: 500;
+    }
+    .tag.green { background: #ECFDF5; color: #065F46; }
+    .tag.orange { background: #FFFBEB; color: #92400E; }
+    .tag.gray { background: var(--gray-100); color: var(--gray-600); }
+    .card-footer {
+      margin-top: auto;
+      padding-top: 10px;
+      border-top: 1px solid var(--gray-100);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: .82rem;
+      color: var(--gray-400);
+    }
+    .card-footer .deadline { font-weight: 600; }
+    .deadline.urgent { color: var(--red); }
+    .btn-detail {
+      font-size: .82rem;
+      color: var(--blue);
+      font-weight: 600;
+      background: var(--blue-light);
+      border: none;
+      border-radius: 6px;
+      padding: 4px 12px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background .2s;
+    }
+    .btn-detail:hover { background: var(--blue-mid); }
+
+    /* ── 회사 카드 ── */
+    .company-card .welfare {
+      font-size: .82rem;
+      color: var(--gray-600);
+      line-height: 1.5;
+    }
+    .company-card .company-name {
+      font-size: 1.05rem;
+      font-weight: 700;
+    }
+    .company-stats {
+      display: flex;
+      gap: 16px;
+      font-size: .83rem;
+    }
+    .company-stats span { color: var(--gray-600); }
+    .company-stats strong { color: var(--gray-800); }
+
+    /* ── 페이지네이션 ── */
+    .pagination {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin-top: 36px;
+    }
+    .page-btn {
+      min-width: 38px;
+      height: 38px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      border: 1.5px solid var(--gray-200);
+      background: #fff;
+      color: var(--gray-600);
+      font-size: .9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all .15s;
+    }
+    .page-btn:hover { border-color: var(--blue); color: var(--blue); }
+    .page-btn.active { background: var(--blue); border-color: var(--blue); color: #fff; font-weight: 700; }
+    .page-btn:disabled { opacity: .4; cursor: not-allowed; }
+
+    /* ── 로딩 / 빈 상태 ── */
+    .loading {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 64px 0;
+      gap: 16px;
+      color: var(--gray-400);
+    }
+    .spinner {
+      width: 40px; height: 40px;
+      border: 3px solid var(--gray-200);
+      border-top-color: var(--blue);
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .empty {
+      text-align: center;
+      padding: 64px 20px;
+      color: var(--gray-400);
+    }
+    .empty .icon { font-size: 3rem; margin-bottom: 12px; }
+    .empty p { font-size: .95rem; }
+
+    /* ── API 키 안내 배너 ── */
+    .api-banner {
+      background: #FFFBEB;
+      border: 1.5px solid #FCD34D;
+      border-radius: var(--radius);
+      padding: 14px 20px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: .88rem;
+      line-height: 1.6;
+      color: #78350F;
+    }
+    .api-banner .icon { font-size: 1.2rem; flex-shrink: 0; }
+    .api-banner code {
+      background: rgba(0,0,0,.07);
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: .85em;
+    }
+    .api-banner .close-btn {
+      margin-left: auto;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #92400E;
+      font-size: 1.2rem;
+      line-height: 1;
+      flex-shrink: 0;
+      padding: 0 4px;
+    }
+
+    /* ── 반응형 ── */
+    @media (max-width: 600px) {
+      header h1 { font-size: 1.5rem; }
+      .search-box { flex-wrap: wrap; }
+      .search-box select { flex: 1 0 100%; }
+      .tabs { overflow-x: auto; }
+      .tab-btn { padding: 10px 16px; font-size: .88rem; white-space: nowrap; }
+      main { padding: 72px 14px 32px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <h1>매력일자리 💼</h1>
+    <p>채용공고 · 훈련과정 · 강소기업 정보를 한눈에</p>
+  </div>
+  <div class="search-wrap">
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder="직종·기업·과정명 검색..." />
+      <select id="regionSelect">
+        <option value="">전체 지역</option>
+        <option value="서울">서울</option>
+        <option value="경기">경기</option>
+        <option value="인천">인천</option>
+        <option value="부산">부산</option>
+        <option value="대구">대구</option>
+        <option value="대전">대전</option>
+        <option value="광주">광주</option>
+        <option value="강원">강원</option>
+        <option value="충북">충북</option>
+        <option value="충남">충남</option>
+        <option value="경북">경북</option>
+        <option value="경남">경남</option>
+        <option value="전북">전북</option>
+        <option value="전남">전남</option>
+        <option value="제주">제주</option>
+      </select>
+      <button class="btn-search" onclick="doSearch()">🔍 검색</button>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <div id="apiBanner" class="api-banner" style="display:none">
+    <span class="icon">⚠️</span>
+    <span>
+      현재 <strong>샘플 데이터</strong>로 동작 중입니다.
+      실제 Work24 데이터를 불러오려면 <code>.env</code> 파일의 <code>WORK24_API_KEY</code>에 API 키를 입력하고 서버를 재시작하세요.
+      API 키는 <strong>work.go.kr</strong> 또는 <strong>data.go.kr</strong>에서 신청할 수 있습니다.
+    </span>
+    <button class="close-btn" onclick="document.getElementById('apiBanner').style.display='none'">✕</button>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="jobs" onclick="switchTab('jobs', this)">
+      📋 채용공고 <span class="tab-count" id="jobs-count">-</span>
+    </button>
+    <button class="tab-btn" data-tab="training" onclick="switchTab('training', this)">
+      📚 훈련과정 <span class="tab-count" id="training-count">-</span>
+    </button>
+    <button class="tab-btn" data-tab="companies" onclick="switchTab('companies', this)">
+      🏢 강소기업 <span class="tab-count" id="companies-count">-</span>
+    </button>
+  </div>
+
+  <div id="tab-jobs" class="tab-content">
+    <div class="result-header">
+      <div class="result-count" id="jobs-result-text">검색 중...</div>
+    </div>
+    <div class="card-grid" id="jobs-grid"></div>
+    <div class="pagination" id="jobs-pagination"></div>
+  </div>
+
+  <div id="tab-training" class="tab-content" style="display:none">
+    <div class="result-header">
+      <div class="result-count" id="training-result-text">검색 중...</div>
+    </div>
+    <div class="card-grid" id="training-grid"></div>
+    <div class="pagination" id="training-pagination"></div>
+  </div>
+
+  <div id="tab-companies" class="tab-content" style="display:none">
+    <div class="result-header">
+      <div class="result-count" id="companies-result-text">검색 중...</div>
+    </div>
+    <div class="card-grid" id="companies-grid"></div>
+    <div class="pagination" id="companies-pagination"></div>
+  </div>
+
+</main>
+
+<script>
+  const PAGE_SIZE = 9;
+  const state = {
+    activeTab: 'jobs',
+    keyword: '',
+    region: '',
+    pages: { jobs: 1, training: 1, companies: 1 },
+    totals: { jobs: 0, training: 0, companies: 0 },
+  };
+
+  // ── 탭 전환
+  function switchTab(tab, btn) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
+    document.getElementById('tab-' + tab).style.display = '';
+    state.activeTab = tab;
+    if (!document.getElementById(tab + '-grid').querySelector('.card,p')) {
+      loadTab(tab);
+    }
+  }
+
+  // ── 검색
+  function doSearch() {
+    state.keyword = document.getElementById('searchInput').value.trim();
+    state.region = document.getElementById('regionSelect').value;
+    state.pages = { jobs: 1, training: 1, companies: 1 };
+    clearGrids();
+    loadTab(state.activeTab);
+    ['jobs', 'training', 'companies'].filter(t => t !== state.activeTab).forEach(t => {
+      state.totals[t] = 0;
+      document.getElementById(t + '-count').textContent = '-';
+    });
+  }
+
+  function clearGrids() {
+    ['jobs', 'training', 'companies'].forEach(t => {
+      document.getElementById(t + '-grid').innerHTML = '';
+      document.getElementById(t + '-pagination').innerHTML = '';
+    });
+  }
+
+  document.getElementById('searchInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') doSearch();
+  });
+
+  // ── API 호출
+  async function loadTab(tab) {
+    const grid = document.getElementById(tab + '-grid');
+    const page = state.pages[tab];
+    grid.innerHTML = '<div class="loading"><div class="spinner"></div><span>불러오는 중...</span></div>';
+
+    const params = new URLSearchParams({
+      keyword: state.keyword,
+      region: state.region,
+      page,
+      pageSize: PAGE_SIZE,
+    });
+
+    try {
+      const res = await fetch(`/api/${tab}?${params}`);
+      const data = await res.json();
+
+      if (data.error) throw new Error(data.error);
+
+      if (data.isMock) {
+        document.getElementById('apiBanner').style.display = 'flex';
+      }
+
+      state.totals[tab] = data.total || 0;
+      document.getElementById(tab + '-count').textContent = data.total || 0;
+      const isReal = !data.isMock && !data.isSample;
+      const badge = isReal
+        ? `<span class="data-badge real">✅ Work24 실제 데이터${data.updatedAt ? ' · ' + data.updatedAt : ''}</span>`
+        : `<span class="data-badge sample">⚡ 샘플 데이터</span>`;
+      document.getElementById(tab + '-result-text').innerHTML =
+        `<strong>${(data.total || 0).toLocaleString()}</strong>건의 결과 ${badge}`;
+
+      grid.innerHTML = '';
+      if (!data.items || data.items.length === 0) {
+        grid.innerHTML = '<div class="empty"><div class="icon">🔍</div><p>검색 결과가 없습니다</p></div>';
+        document.getElementById(tab + '-pagination').innerHTML = '';
+        return;
+      }
+
+      data.items.forEach(item => {
+        grid.appendChild(renderCard(tab, item));
+      });
+
+      renderPagination(tab, data.total, page);
+    } catch (e) {
+      grid.innerHTML = `<div class="empty"><div class="icon">⚠️</div><p>데이터를 불러오지 못했습니다<br><small>${e.message}</small></p></div>`;
+    }
+  }
+
+  // ── 카드 렌더링
+  function renderCard(tab, item) {
+    const card = document.createElement('a');
+    card.className = 'card';
+    card.href = item.url && item.url !== '#' ? item.url : 'javascript:void(0)';
+    if (item.url && item.url !== '#') card.target = '_blank';
+    card.rel = 'noopener noreferrer';
+
+    if (tab === 'jobs') {
+      const daysLeft = item.deadline ? daysUntil(item.deadline) : null;
+      const deadlineClass = daysLeft !== null && daysLeft <= 7 ? 'deadline urgent' : 'deadline';
+      const deadlineText = daysLeft === null ? item.deadline || '-'
+        : daysLeft < 0 ? '마감'
+        : daysLeft === 0 ? 'D-Day'
+        : `D-${daysLeft} (${item.deadline})`;
+      const empTypes = (item.employmentType || '').split('|').filter(Boolean);
+
+      card.innerHTML = `
+        <div class="card-company">${esc(item.company || '')}${item.companyType ? ` <span style="font-weight:400;font-size:.8rem;color:var(--gray-400)">${esc(item.companyType)}</span>` : ''}</div>
+        <div class="card-title">${esc(item.title || '')}</div>
+        <div class="card-tags">
+          ${empTypes.map(t => `<span class="tag green">💼 ${esc(t)}</span>`).join('')}
+        </div>
+        <div class="card-footer">
+          <span class="${deadlineClass}">📅 ${deadlineText}</span>
+          <span class="btn-detail">자세히 →</span>
+        </div>`;
+    } else if (tab === 'training') {
+      card.innerHTML = `
+        <div class="card-title">${esc(item.title || '')}</div>
+        <div class="card-company">${esc(item.institution || '')}</div>
+        <div class="card-tags">
+          ${item.region ? `<span class="tag">📍 ${esc(item.region)}</span>` : ''}
+          ${item.cost ? `<span class="tag green">💰 ${esc(item.cost)}</span>` : ''}
+          ${item.ncs ? `<span class="tag orange">🏷 ${esc(item.ncs)}</span>` : ''}
+        </div>
+        <div class="card-footer">
+          <span>📅 ${esc(item.startDate || '')} ~ ${esc(item.endDate || '')}</span>
+          <span class="btn-detail">신청하기 →</span>
+        </div>`;
+    } else {
+      card.className = 'card company-card';
+      card.innerHTML = `
+        <div class="company-name">${esc(item.name || '')}${item.companyType ? ` <span style="font-weight:400;font-size:.8rem;color:var(--gray-400)">${esc(item.companyType)}</span>` : ''}</div>
+        ${item.summary ? `<div class="card-tags"><span class="tag orange">💡 ${esc(item.summary)}</span></div>` : ''}
+        ${item.description ? `<div class="welfare">${esc(item.description.slice(0, 80))}${item.description.length > 80 ? '…' : ''}</div>` : ''}
+        <div class="card-footer">
+          <span></span>
+          <span class="btn-detail">기업정보 →</span>
+        </div>`;
+    }
+    return card;
+  }
+
+  // ── 페이지네이션
+  function renderPagination(tab, total, current) {
+    const container = document.getElementById(tab + '-pagination');
+    const totalPages = Math.ceil(total / PAGE_SIZE);
+    if (totalPages <= 1) { container.innerHTML = ''; return; }
+
+    const maxShow = 5;
+    let start = Math.max(1, current - Math.floor(maxShow / 2));
+    let end = Math.min(totalPages, start + maxShow - 1);
+    if (end - start < maxShow - 1) start = Math.max(1, end - maxShow + 1);
+
+    let html = `<button class="page-btn" onclick="goPage('${tab}',${current - 1})" ${current === 1 ? 'disabled' : ''}>‹</button>`;
+    for (let i = start; i <= end; i++) {
+      html += `<button class="page-btn ${i === current ? 'active' : ''}" onclick="goPage('${tab}',${i})">${i}</button>`;
+    }
+    html += `<button class="page-btn" onclick="goPage('${tab}',${current + 1})" ${current === totalPages ? 'disabled' : ''}>›</button>`;
+    container.innerHTML = html;
+  }
+
+  function goPage(tab, page) {
+    if (page < 1 || page > Math.ceil(state.totals[tab] / PAGE_SIZE)) return;
+    state.pages[tab] = page;
+    loadTab(tab);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // ── 유틸
+  function esc(str) {
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function daysUntil(dateStr) {
+    const d = new Date(dateStr);
+    if (isNaN(d)) return null;
+    return Math.ceil((d - new Date()) / 86400000);
+  }
+
+  // ── 초기 로드
+  loadTab('jobs');
+</script>
+</body>
+</html>
